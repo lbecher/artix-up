@@ -8,10 +8,13 @@ pluks="/dev/nvme0n1p3"
 
 loadkeys br-abnt2
 
-sv up ntpd
-
 cryptsetup -s 256 -h sha256 -c aes-xts-plain64 luksFormat $pluks
-cryptsetup luksOpen $pluks "${gname}_luks"
+
+pluks_uuid=$( blkid -o value -s UUID $pluks )
+plvm="/dev/mapper/luks-$pluks_uuid"
+plvm_name="luks-$pluks_uuid"
+
+cryptsetup luksOpen $pluks $plvm_name
 
 pvcreate $plvm
 vgcreate $gname $plvm
@@ -25,9 +28,9 @@ mkswap /dev/$gname/swap
 mkfs.fat -F 32 $pefi
 fatlabel $pefi ESP
 
-mkfs.xfs $pboot
-mkfs.xfs /dev/$gname/root
-mkfs.xfs /dev/$gname/home
+mkfs.xfs $pboot -f
+mkfs.xfs /dev/$gname/root -f
+mkfs.xfs /dev/$gname/home -f
 
 mount /dev/$gname/root /mnt
 
