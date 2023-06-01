@@ -43,7 +43,7 @@ swapon /dev/$gname/swap
 
 basestrap /mnt linux linux-firmware \
     base base-devel runit elogind-runit \
-    grub os-prober efibootmgr nano \
-    NetworkManager
+    grub os-prober efibootmgr \
+    NetworkManager nano git
 
 fstabgen -U /mnt > /mnt/etc/fstab
